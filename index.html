@@ -5,15 +5,131 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>defence</title>
     <style>
+        :root {
+            --box-width: min(75vw, 90vh * 16 / 11);
+        }
+
         body {
             background-color: gray;
-        }   
-        div {
-            background-color: #00000055;
-        }  
+            margin: 0;
+            min-height: 100vh;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 사이드바 */
+        #sidebar {
+            width: var(--box-width);
+            height: calc(var(--box-width) * 0.06);
+            background: transparent;
+            display: flex;
+            position: relative;
+        }
+
+        /* 사이드 버튼 */
+        .side_button {
+            width: calc(var(--box-width) / 6);
+            height: 100%;
+            background: #00000080;
+            border: none;
+            color: white;
+            cursor: pointer;
+            z-index: 1;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        /* 선택 표시 */
+        #select {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: calc(var(--box-width) / 6);
+            height: 100%;
+            background: #00000080;
+            z-index: 0;
+
+            /* ⭐ 부드러운 움직임 (가까워질수록 느려짐) */
+            transition: transform 0.45s cubic-bezier(0.39, 0.575, 0.565, 1);
+            pointer-events: none;
+        }
+
+        /* 메인 화면 */
+        #main {
+            width: var(--box-width);
+            aspect-ratio: 16 / 11;
+            background-color: #00000080;
+            container-type: size;
+        }
+        .page {
+            width: 100%;
+            height: 100%;
+        }
+        .option_row {
+            display: flex;
+            align-items: center;
+            gap: 0.8em;
+        }
     </style>
 </head>
+
 <body>
-    <div>
+    <div id="sidebar">
+        <div id="select" data-select="new_game"></div>
+        <button class="side_button" id="new_game">New Game</button>
+        <button class="side_button" id="multi_play">Multi Play</button>
     </div>
+    <div id="main">
+        <div class="page" id="new_game_page" style="display: block;">
+            <div class="option_row">
+                <span style="color:white;width:20cqb;font-size: 5cqb;margin-top:2cqb;margin-left:3cqb">difficulty</span>
+                <input type="range" min="0" max="3" step="1" value="0" style="width:30cqb;margin-top:2cqb;">
+                <span style="color:white;width:5cqb;font-size: 5cqb;margin-top:2cqb;">N/A</span>
+            </div>
+            <div class="option_row" style="margin-top:2cqb;">
+                <input type="button" value="map select" style="color:black;width:30cqb;font-size: 5cqb;margin-top:2cqb;margin-left:3cqb">
+                <span style="color:white;width:5cqb;font-size: 5cqb;margin-top:2cqb;">N/A</span>
+            </div>
+            <!-- <img src="" alt="" style="width: 50cqb;"> 나중에 맵 미리보기 추가-->
+        </div>
+        <div class="page" id="multi_play_page" style="display: none;">
+        </div>
+    </div>
+
+    <script>
+        const select = document.getElementById("select");
+        const buttons = document.querySelectorAll(".side_button");
+
+        buttons.forEach((btn, idx) => {
+            btn.addEventListener("click", () => {
+                select.dataset.select = btn.id;
+                select.style.transform = `translateX(calc((var(--box-width) / 6) * ${idx}))`;
+            });
+        });
+
+        function fitButtonText(button, min = 10, max = 18) {
+            let size = max;
+            button.style.fontSize = size + "px";
+
+            while (button.scrollWidth > button.clientWidth && size > min) {
+                size--;
+                button.style.fontSize = size + "px";
+            }
+        }
+
+        function fitAllButtons() {
+            document.querySelectorAll(".side_button")
+                .forEach(btn => fitButtonText(btn));
+        }
+
+        /* 최초 로드 */
+        window.addEventListener("load", fitAllButtons);
+
+        /* 화면 크기 변경 시 재계산 */
+        window.addEventListener("resize", fitAllButtons);
+    </script>
 </body>
+</html>
