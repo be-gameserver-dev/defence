@@ -5,15 +5,86 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>defence</title>
     <style>
+        :root {
+            --box-width: min(75vw, 90vh * 16 / 11);
+        }
+
         body {
             background-color: gray;
-        }   
-        div {
-            background-color: #00000055;
-        }  
+            margin: 0;
+            min-height: 100vh;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 사이드바 */
+        #sidebar {
+            width: var(--box-width);
+            height: calc(var(--box-width) * 0.06);
+            background: transparent;
+            display: flex;
+            position: relative;
+        }
+
+        /* 사이드 버튼 */
+        .side_button {
+            width: calc(var(--box-width) / 6);
+            height: 100%;
+            background: #00000080;
+            border: none;
+            color: white;
+            cursor: pointer;
+            z-index: 1;
+        }
+
+        /* 선택 표시 */
+        #select {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: calc(var(--box-width) / 6);
+            height: 100%;
+            background: #00000080;
+            z-index: 0;
+
+            /* ⭐ 부드러운 움직임 (가까워질수록 느려짐) */
+            transition: transform 0.45s cubic-bezier(0.39, 0.575, 0.565, 1);
+            pointer-events: none;
+        }
+
+        /* 메인 화면 */
+        #main {
+            width: var(--box-width);
+            aspect-ratio: 16 / 11;
+            background-color: #00000080;
+        }
     </style>
 </head>
+
 <body>
-    <div>
+    <div id="sidebar">
+        <div id="select" data-select="new_game"></div>
+        <button class="side_button" id="new_game">New Game</button>
+        <button class="side_button" id="multi_play">Multi Play</button>
     </div>
+    <div id="main">
+        <div class="page" id="new_game_page"></div>
+        <div class="page" id="multi_play_page"></div>
+    </div>
+
+    <script>
+        const select = document.getElementById("select");
+        const buttons = document.querySelectorAll(".side_button");
+
+        buttons.forEach((btn, idx) => {
+            btn.addEventListener("click", () => {
+                select.dataset.select = btn.id;
+                select.style.transform = `translateX(calc((var(--box-width) / 6) * ${idx}))`;
+            });
+        });
+    </script>
 </body>
+</html>
